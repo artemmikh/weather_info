@@ -68,4 +68,9 @@ class CRUDUser(CRUDBase):
     pass
 
 
+class CRUDCity(CRUDBase):
+    pass
+
+
+city_crud = CRUDCity(City)
 user_crud = CRUDUser(User)
