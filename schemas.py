@@ -19,6 +19,19 @@ class City(BaseModel):
     coordinates: Coordinates
 
 
-class User(BaseModel):
+class UserCreate(BaseModel):
     name: str
+
+    class Config:
+        schema_extra = {
+            'example': {
+                'name': 'Иван',
+            }
+        }
+
+
+class UserDB(BaseModel):
     id: int
+
+    class Config:
+        orm_mode = True
