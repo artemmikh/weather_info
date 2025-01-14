@@ -1,14 +1,16 @@
+from http import HTTPStatus
+
 import uvicorn
 from fastapi import FastAPI, Depends
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.util import await_only
 
 from core.config import settings
 from core.db import Base, engine, get_async_session
 from models import User, City  # noqa
-from schemas import Coordinates, UserCreate, UserDB
+from schemas import Coordinates, UserCreate, UserDB, CityCreate
 from weather_api import get_weather_data
-from crud import user_crud
+from crud import user_crud, city_crud
 
 app = FastAPI(
     title=settings.app_title,
@@ -31,6 +33,17 @@ async def register_user(
         data: UserCreate,
         session: AsyncSession = Depends(get_async_session)):
     return await user_crud.create(data, session)
+
+
+@app.post('/add-city')
+async def add_city(
+        city: CityCreate,
+        session: AsyncSession = Depends(get_async_session)):
+    await city_crud.create(city, session)
+    return JSONResponse(
+        status_code=HTTPStatus.CREATED,
+        content={'message': 'Город добавлен в отслеживаемые'}
+    )
 
 
 async def create_tables():

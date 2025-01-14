@@ -14,9 +14,19 @@ class Coordinates(BaseModel):
         }
 
 
-class City(BaseModel):
+class CityCreate(BaseModel):
     name: str
-    coordinates: Coordinates
+    lat: float
+    lon: float
+
+    class Config:
+        schema_extra = {
+            'example': {
+                'name': 'Moscow',
+                'lat': '55.7522',
+                'lon': '37.6156',
+            }
+        }
 
 
 class UserCreate(BaseModel):
