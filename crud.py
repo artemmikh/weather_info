@@ -78,7 +78,16 @@ class CRUDUser(CRUDBase):
 
 
 class CRUDCity(CRUDBase):
-    pass
+    
+    async def get_city_id_by_name(
+            self,
+            name: str,
+            session: AsyncSession,
+    ) -> Optional[int]:
+        city_id = await session.execute(
+            select(City.id).where(City.name == name)
+        )
+        return city_id.scalars().first()
 
 
 city_crud = CRUDCity(City)
