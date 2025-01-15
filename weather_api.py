@@ -1,3 +1,4 @@
+from datetime import datetime
 from http import HTTPStatus
 
 import openmeteo_requests
@@ -55,3 +56,8 @@ async def get_current_weather_for_update(coordinates: Coordinates) -> dict:
         "precipitation": current.Variables(2).Value(),
         "wind_speed": current.Variables(3).Value()
     }
+
+
+async def get_today_weather_by_time(coordinates: Coordinates,
+                                    hour: int) -> dict:
+    pass

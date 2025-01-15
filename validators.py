@@ -1,3 +1,4 @@
+import re
 from http import HTTPStatus
 
 from fastapi import HTTPException
@@ -26,3 +27,23 @@ async def check_city_name_duplicate(
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Место с таким именем уже существует!',
         )
+
+
+async def check_city_exists(
+        name: str,
+        session: AsyncSession, ) -> None:
+    city_id = await city_crud.get_city_id_by_name(name, session)
+    if city_id is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Места с таким именем не существует!',
+        )
+
+
+async def check_time(time: str):
+    if not re.fullmatch(r"^([01]\d|2[0-3])$", time):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Время должно быть в формате '00'–'23'."
+        )
+    return True

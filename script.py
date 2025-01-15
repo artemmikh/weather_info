@@ -1,19 +1,25 @@
 from http import HTTPStatus
+from typing import List, Literal
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import uvicorn
 from fastapi import FastAPI, Depends
+from fastapi.params import Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from core.db import Base, engine, get_async_session
 from models import User, City  # noqa
-from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB
+from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB, \
+    WeatherResponse
 from services import update_weather_for_all_cities, get_weather_for_city
 from crud import user_crud, city_crud
-from validators import check_user_name_duplicate, check_city_name_duplicate
-from weather_api import get_temperature_pressure_windspeed
+from validators import check_user_name_duplicate, check_city_name_duplicate, \
+    check_city_exists, check_time
+from weather_api import get_temperature_pressure_windspeed, \
+    get_today_weather_by_time
 
 app = FastAPI(
     title=settings.app_title,
@@ -48,6 +54,27 @@ def read_root():
 @app.post("/weather")
 async def get_weather_by_coordinates(coordinates: Coordinates):
     return await get_temperature_pressure_windspeed(coordinates)
+
+
+@app.get("/weather", response_model=WeatherResponse)
+async def get_weather(
+        city: str,
+        time: str,
+        params: List[Literal[
+            "temperature", "humidity", "wind_speed", "precipitation"]] = Query(
+            ...,
+            description="Параметры погоды, которые необходимо вернуть. "
+                        "Возможные значения: "
+                        "temperature, humidity, wind_speed, precipitation."
+        ),
+        session: AsyncSession = Depends(get_async_session)
+):
+    await check_city_exists(city, session)
+    await check_time(time)
+    city = await city_crud.get_city_obj_by_name(city, session)
+    coordinates = Coordinates(lat=city.lat, lon=city.lon)
+    res = await get_today_weather_by_time(coordinates, time)
+    print(res)
 
 
 @app.post('/users', response_model=UserDB)

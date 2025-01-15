@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -53,3 +55,10 @@ class UserDB(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class WeatherResponse(BaseModel):
+    temperature: Optional[float] = None
+    humidity: Optional[float] = None
+    wind_speed: Optional[float] = None
+    precipitation: Optional[float] = None
