@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.config import settings
 from core.db import Base, engine, get_async_session
 from models import User, City  # noqa
-from schemas import Coordinates, UserCreate, UserDB, CityCreate
+from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB
 from services import update_weather_for_all_cities, get_weather_for_city
 from crud import user_crud, city_crud
 from weather_api import get_temperature_pressure_windspeed
@@ -45,7 +45,7 @@ def read_root():
 
 
 @app.post("/weather")
-async def get_weather(coordinates: Coordinates):
+async def get_weather_by_coordinates(coordinates: Coordinates):
     return await get_temperature_pressure_windspeed(coordinates)
 
 
@@ -56,7 +56,7 @@ async def register_user(
     return await user_crud.create(data, session)
 
 
-@app.post('/add-city')
+@app.post('/city')
 async def add_city(
         city: CityCreate,
         session: AsyncSession = Depends(get_async_session)):
@@ -66,6 +66,11 @@ async def add_city(
         status_code=HTTPStatus.CREATED,
         content={'message': 'Город добавлен в отслеживаемые'}
     )
+
+
+@app.get('/city', response_model=list[CityDB])
+async def get_list_city(session: AsyncSession = Depends(get_async_session)):
+    return await city_crud.get_multi(session)
 
 
 async def create_tables():
