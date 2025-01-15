@@ -12,6 +12,7 @@ from models import User, City  # noqa
 from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB
 from services import update_weather_for_all_cities, get_weather_for_city
 from crud import user_crud, city_crud
+from validators import check_user_name_duplicate
 from weather_api import get_temperature_pressure_windspeed
 
 app = FastAPI(
@@ -49,10 +50,11 @@ async def get_weather_by_coordinates(coordinates: Coordinates):
     return await get_temperature_pressure_windspeed(coordinates)
 
 
-@app.post('/register', response_model=UserDB)
+@app.post('/users', response_model=UserDB)
 async def register_user(
         data: UserCreate,
         session: AsyncSession = Depends(get_async_session)):
+    await check_user_name_duplicate(data.name, session)
     return await user_crud.create(data, session)
 
 
