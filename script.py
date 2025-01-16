@@ -1,3 +1,4 @@
+from asyncio import wait_for
 from http import HTTPStatus
 from typing import List, Literal
 
@@ -56,10 +57,14 @@ async def get_weather_by_coordinates(coordinates: Coordinates):
     return await get_temperature_pressure_windspeed(coordinates)
 
 
-@app.get("/weather", response_model=WeatherResponse)
-async def get_weather(
+@app.get(
+    "/weather",
+    response_model=WeatherResponse,
+    response_model_exclude_none=True,
+)
+async def get_weather_by_time(
         city: str,
-        time: int = Query(
+        hour: int = Query(
             ...,
             ge=0, le=23,
             description="Время в формате от 0 до 23, "
@@ -75,11 +80,11 @@ async def get_weather(
         session: AsyncSession = Depends(get_async_session)
 ):
     await check_city_exists(city, session)
-    await check_time(time)
+    await check_time(hour)
     city = await city_crud.get_city_obj_by_name(city, session)
     coordinates = Coordinates(lat=city.lat, lon=city.lon)
-    res = await get_today_weather_by_time(coordinates, time)
-    print(res)
+    weather = await get_today_weather_by_time(coordinates, hour)
+    return {param: weather[param] for param in params if param in weather}
 
 
 @app.post('/users', response_model=UserDB)

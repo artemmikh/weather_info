@@ -1,4 +1,3 @@
-from datetime import datetime
 from http import HTTPStatus
 
 import openmeteo_requests
@@ -15,6 +14,17 @@ retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 openmeteo = openmeteo_requests.Client(session=retry_session)
 
 
+async def get_openmeteo_response(params: dict):
+    try:
+        responses = openmeteo.weather_api(url, params=params)
+        return responses
+    except Exception:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_GATEWAY,
+            detail=f'Ошибка получения данных от {url}',
+        )
+
+
 async def get_current_weather(coordinates: Coordinates) -> VariablesWithTime:
     params: dict = {
         "latitude": coordinates.lat,
@@ -29,14 +39,8 @@ async def get_current_weather(coordinates: Coordinates) -> VariablesWithTime:
         "wind_speed_unit": "ms",
         "timezone": "Europe/Moscow"
     }
-    try:
-        responses = openmeteo.weather_api(url, params=params)
-        return responses[0].Current()
-    except Exception:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_GATEWAY,
-            detail=f'Ошибка получения данных от {url}',
-        )
+    responses = await get_openmeteo_response(params)
+    return responses[0].Current()
 
 
 async def get_temperature_pressure_windspeed(coordinates: Coordinates) -> dict:
@@ -72,7 +76,7 @@ async def get_today_weather_by_time(coordinates: Coordinates,
         "timezone": "GMT",
         "forecast_days": 1
     }
-    responses = openmeteo.weather_api(url, params=params)
+    responses = await get_openmeteo_response(params)
     response = responses[0]
     hourly = response.Hourly()
     hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
