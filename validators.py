@@ -40,10 +40,10 @@ async def check_city_exists(
         )
 
 
-async def check_time(time: str):
-    if not re.fullmatch(r"^([01]\d|2[0-3])$", time):
+async def check_time(time: int):
+    if not (0 <= time <= 23):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Время должно быть в формате '00'–'23'."
+            detail="Время должно быть в диапазоне от 0 до 23."
         )
     return True

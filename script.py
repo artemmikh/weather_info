@@ -59,7 +59,12 @@ async def get_weather_by_coordinates(coordinates: Coordinates):
 @app.get("/weather", response_model=WeatherResponse)
 async def get_weather(
         city: str,
-        time: str,
+        time: int = Query(
+            ...,
+            ge=0, le=23,
+            description="Время в формате от 0 до 23, "
+                        "где 0 — это полночь, а 23 — 23:00"
+        ),
         params: List[Literal[
             "temperature", "humidity", "wind_speed", "precipitation"]] = Query(
             ...,

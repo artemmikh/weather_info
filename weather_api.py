@@ -60,4 +60,29 @@ async def get_current_weather_for_update(coordinates: Coordinates) -> dict:
 
 async def get_today_weather_by_time(coordinates: Coordinates,
                                     hour: int) -> dict:
-    pass
+    params = {
+        "latitude": coordinates.lat,
+        "longitude": coordinates.lon,
+        "hourly": [
+            "temperature_2m",
+            "relative_humidity_2m",
+            "precipitation",
+            "wind_speed_10m"
+        ],
+        "timezone": "GMT",
+        "forecast_days": 1
+    }
+    responses = openmeteo.weather_api(url, params=params)
+    response = responses[0]
+    hourly = response.Hourly()
+    hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
+    hourly_relative_humidity_2m = hourly.Variables(1).ValuesAsNumpy()
+    hourly_precipitation = hourly.Variables(2).ValuesAsNumpy()
+    hourly_wind_speed_10m = hourly.Variables(3).ValuesAsNumpy()
+
+    return {
+        'temperature': hourly_temperature_2m[hour].item(),
+        'precipitation': hourly_precipitation[hour].item(),
+        'humidity': hourly_relative_humidity_2m[hour].item(),
+        'wind_speed': hourly_wind_speed_10m[hour].item()
+    }
