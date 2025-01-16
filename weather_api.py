@@ -68,12 +68,8 @@ async def get_daily_weather(coordinates: Coordinates) -> dict:
         ],
         "timezone": "Europe/Moscow"
     }
-
-    # Запрос данных через Open-Meteo API
     responses = await get_openmeteo_response(params)
     response = responses[0]
-
-    # Обработка ежедневных данных
     daily = response.Daily()
     return {
         "temperature_max": daily.Variables(0).ValuesAsNumpy().tolist(),
