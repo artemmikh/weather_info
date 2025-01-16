@@ -52,13 +52,35 @@ async def get_temperature_pressure_windspeed(coordinates: Coordinates) -> dict:
     }
 
 
-async def get_current_weather_for_update(coordinates: Coordinates) -> dict:
-    current: VariablesWithTime = await get_current_weather(coordinates)
+async def get_daily_weather(coordinates: Coordinates) -> dict:
+    """
+    Получает ежедневный прогноз погоды для заданных координат.
+    """
+    params = {
+        "latitude": coordinates.lat,
+        "longitude": coordinates.lon,
+        "daily": [
+            "temperature_2m_max",
+            "temperature_2m_min",
+            "precipitation_sum",
+            "precipitation_hours",
+            "wind_speed_10m_max"
+        ],
+        "timezone": "Europe/Moscow"
+    }
+
+    # Запрос данных через Open-Meteo API
+    responses = await get_openmeteo_response(params)
+    response = responses[0]
+
+    # Обработка ежедневных данных
+    daily = response.Daily()
     return {
-        "temperature": current.Variables(0).Value(),
-        "humidity": current.Variables(1).Value(),
-        "precipitation": current.Variables(2).Value(),
-        "wind_speed": current.Variables(3).Value()
+        "temperature_max": daily.Variables(0).ValuesAsNumpy().tolist(),
+        "temperature_min": daily.Variables(1).ValuesAsNumpy().tolist(),
+        "precipitation_sum": daily.Variables(2).ValuesAsNumpy().tolist(),
+        "precipitation_hours": daily.Variables(3).ValuesAsNumpy().tolist(),
+        "wind_speed_max": daily.Variables(4).ValuesAsNumpy().tolist(),
     }
 
 
