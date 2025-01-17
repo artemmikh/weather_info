@@ -3,10 +3,6 @@ from sqlalchemy import Column, String, Float
 from core.db import Base
 
 
-class User(Base):
-    name = Column(String(100), unique=True, nullable=False)
-
-
 class City(Base):
     """Модель города с данными о погоде."""
     name = Column(String(100), unique=True, nullable=False)

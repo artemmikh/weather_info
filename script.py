@@ -10,13 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from core.db import Base, engine, get_async_session
-from crud import user_crud, city_crud
-from models import User, City  # noqa
-from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB, \
-    WeatherResponse
+from crud import city_crud
+from models import City  # noqa
+from schemas import Coordinates, CityCreate, CityDB, WeatherResponse
 from services import update_weather_for_all_cities, get_weather_for_city
-from validators import check_user_name_duplicate, check_city_name_duplicate, \
-    check_city_exists, check_time
+from validators import check_city_name_duplicate, check_city_exists, check_time
 from weather_api import get_temperature_pressure_windspeed, \
     get_today_weather_by_hour
 
@@ -85,16 +83,6 @@ async def get_today_weather_by_time(
     coordinates = Coordinates(lat=city_obj.lat, lon=city_obj.lon)
     weather = await get_today_weather_by_hour(coordinates, hour)
     return {param: weather[param] for param in params if param in weather}
-
-
-@app.post('/users', response_model=UserDB)
-async def register_user(
-        data: UserCreate,
-        session: AsyncSession = Depends(get_async_session)
-) -> UserDB:
-    """Регистрирует нового пользователя."""
-    await check_user_name_duplicate(data.name, session)
-    return await user_crud.create(data, session)
 
 
 @app.post('/city')

@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import User, City
+from models import City
 
 
 class CRUDBase:
@@ -30,8 +30,7 @@ class CRUDBase:
     async def create(
             self,
             obj_in,
-            session: AsyncSession,
-            user: Optional[User] = None
+            session: AsyncSession
     ):
         """Создать новый объект."""
         obj_in_data = obj_in.dict()
@@ -57,17 +56,6 @@ class CRUDBase:
         return db_obj
 
 
-class CRUDUser(CRUDBase):
-
-    async def get_user_id_by_name(
-            self, name: str, session: AsyncSession) -> Optional[int]:
-        """Получить ID пользователя по имени."""
-        user_id = await session.execute(
-            select(User.id).where(User.name == name)
-        )
-        return user_id.scalars().first()
-
-
 class CRUDCity(CRUDBase):
 
     async def get_city_id_by_name(
@@ -88,4 +76,3 @@ class CRUDCity(CRUDBase):
 
 
 city_crud = CRUDCity(City)
-user_crud = CRUDUser(User)

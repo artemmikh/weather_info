@@ -50,26 +50,6 @@ class CityUpdate(BaseModel):
     wind_speed_max: Optional[float]
 
 
-class UserCreate(BaseModel):
-    """Схема данных для создания нового пользователя"""
-    name: str
-
-    class Config:
-        schema_extra = {
-            'example': {
-                'name': 'Иван',
-            }
-        }
-
-
-class UserDB(BaseModel):
-    """Схема модели пользователя в базе данных"""
-    id: int
-
-    class Config:
-        orm_mode = True
-
-
 class WeatherResponse(BaseModel):
     """Схема ответа с данными о погоде для города"""
     temperature: Optional[float] = None
