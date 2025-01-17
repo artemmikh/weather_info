@@ -50,7 +50,7 @@ def read_root():
 
 
 @app.post("/weather")
-async def get_weather_by_coordinates(coordinates: Coordinates):
+async def get_current_weather_by_coordinates(coordinates: Coordinates):
     return await get_temperature_pressure_windspeed(coordinates)
 
 
@@ -59,7 +59,7 @@ async def get_weather_by_coordinates(coordinates: Coordinates):
     response_model=WeatherResponse,
     response_model_exclude_none=True,
 )
-async def get_weather_by_time(
+async def get_today_weather_by_time(
         city: str,
         hour: int = Query(
             ...,
