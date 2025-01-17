@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     description: str = 'HTTP-сервер для предоставления информации по погоде'
     update_interval_seconds: int = 900
     logger: logging.Logger = logger
+    open_meteo_url = 'https://api.open-meteo.com/v1/forecast'
 
     class Config:
         env_file: str = '.env'

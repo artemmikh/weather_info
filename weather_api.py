@@ -8,8 +8,8 @@ from openmeteo_sdk.VariablesWithTime import VariablesWithTime
 from retry_requests import retry
 
 from schemas import Coordinates
+from core.config import settings
 
-url = 'https://api.open-meteo.com/v1/forecast'
 cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
 retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 openmeteo = openmeteo_requests.Client(session=retry_session)
@@ -17,12 +17,13 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 
 async def get_openmeteo_response(params: Dict[str, Any]) -> Any:
     try:
-        responses: Any = openmeteo.weather_api(url, params=params)
+        responses: Any = openmeteo.weather_api(
+            settings.open_meteo_url, params=params)
         return responses
     except Exception:
         raise HTTPException(
             status_code=HTTPStatus.BAD_GATEWAY,
-            detail=f'Ошибка получения данных от {url}',
+            detail=f'Ошибка получения данных от {settings.open_meteo_url}',
         )
 
 
