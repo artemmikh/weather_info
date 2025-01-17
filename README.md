@@ -119,12 +119,6 @@ GET /cities
 - `parameters` (list): список параметров погоды, например: `temperature`,
   `humidity`, `wind_speed`, `precipitation`
 
-**Пример запроса:**
-
-```bash
-GET /weather/hourly?city_name=Москва&hour=14&parameters=temperature,humidity,precipitation
-```
-
 **Ответ:**
 
 ```json
