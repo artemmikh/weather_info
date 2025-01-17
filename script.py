@@ -5,7 +5,7 @@ from typing import List, Literal
 import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi.params import Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
@@ -44,8 +44,8 @@ async def startup() -> None:
 
 
 @app.get('/')
-def read_root() -> dict[str, str]:
-    return {'weather_info': 'hello!'}
+def read_root() -> RedirectResponse:
+    return RedirectResponse(url='/docs')
 
 
 @app.post('/weather')
