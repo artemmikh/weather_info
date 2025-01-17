@@ -9,6 +9,7 @@ from weather_api import get_daily_weather
 
 
 async def update_weather(cities: List[City]) -> None:
+    """Обновляет данные о погоде для списка городов."""
     for city in cities:
         coordinates: Coordinates = Coordinates(lat=city.lat, lon=city.lon)
         daily_weather: dict = await get_daily_weather(coordinates)
@@ -19,6 +20,7 @@ async def update_weather(cities: List[City]) -> None:
 
 
 async def update_weather_for_all_cities(session: AsyncSession) -> None:
+    """Обновляет погоду для всех городов в базе данных."""
     result = await session.execute(select(City))
     cities: List[City] = result.scalars().all()
     await update_weather(cities)
@@ -26,4 +28,5 @@ async def update_weather_for_all_cities(session: AsyncSession) -> None:
 
 
 async def get_weather_for_city(city: City) -> None:
+    """Обновляет погоду для одного города."""
     await update_weather([city])

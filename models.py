@@ -8,6 +8,7 @@ class User(Base):
 
 
 class City(Base):
+    """Модель города с данными о погоде."""
     name = Column(String(100), unique=True, nullable=False)
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)

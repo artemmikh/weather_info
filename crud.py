@@ -10,13 +10,11 @@ from models import User, City
 class CRUDBase:
 
     def __init__(self, model):
+        """Инициализация CRUD с указанной моделью."""
         self.model = model
 
-    async def get(
-            self,
-            obj_id: int,
-            session: AsyncSession,
-    ):
+    async def get(self, obj_id: int, session: AsyncSession):
+        """Получить объект по ID."""
         db_obj = await session.execute(
             select(self.model).where(
                 self.model.id == obj_id
@@ -24,10 +22,8 @@ class CRUDBase:
         )
         return db_obj.scalars().first()
 
-    async def get_multi(
-            self,
-            session: AsyncSession
-    ):
+    async def get_multi(self, session: AsyncSession):
+        """Получить список всех объектов."""
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
@@ -37,6 +33,7 @@ class CRUDBase:
             session: AsyncSession,
             user: Optional[User] = None
     ):
+        """Создать новый объект."""
         obj_in_data = obj_in.dict()
         if user is not None:
             obj_in_data['user_id'] = user.id
@@ -46,12 +43,8 @@ class CRUDBase:
         await session.refresh(db_obj)
         return db_obj
 
-    async def update(
-            self,
-            db_obj,
-            obj_in,
-            session: AsyncSession,
-    ):
+    async def update(self, db_obj, obj_in, session: AsyncSession):
+        """Обновить данные объекта."""
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(exclude_unset=True)
 
@@ -67,10 +60,8 @@ class CRUDBase:
 class CRUDUser(CRUDBase):
 
     async def get_user_id_by_name(
-            self,
-            name: str,
-            session: AsyncSession,
-    ) -> Optional[int]:
+            self, name: str, session: AsyncSession) -> Optional[int]:
+        """Получить ID пользователя по имени."""
         user_id = await session.execute(
             select(User.id).where(User.name == name)
         )
@@ -80,20 +71,16 @@ class CRUDUser(CRUDBase):
 class CRUDCity(CRUDBase):
 
     async def get_city_id_by_name(
-            self,
-            name: str,
-            session: AsyncSession,
-    ) -> Optional[int]:
+            self, name: str, session: AsyncSession) -> Optional[int]:
+        """Получить ID города по имени."""
         city_id = await session.execute(
             select(City.id).where(City.name == name)
         )
         return city_id.scalars().first()
 
     async def get_city_obj_by_name(
-            self,
-            name: str,
-            session: AsyncSession,
-    ) -> Optional[int]:
+            self, name: str, session: AsyncSession) -> Optional[int]:
+        """Получить объект города по имени."""
         city = await session.execute(
             select(City).where(City.name == name)
         )

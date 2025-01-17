@@ -16,6 +16,7 @@ openmeteo = openmeteo_requests.Client(session=retry_session)
 
 
 async def get_openmeteo_response(params: Dict[str, Any]) -> Any:
+    """Получение ответа от OpenMeteo."""
     try:
         responses: Any = openmeteo.weather_api(
             settings.open_meteo_url, params=params)
@@ -28,6 +29,7 @@ async def get_openmeteo_response(params: Dict[str, Any]) -> Any:
 
 
 async def get_current_weather(coordinates: Coordinates) -> VariablesWithTime:
+    """Получение текущей погоды для города."""
     params = {
         'latitude': coordinates.lat,
         'longitude': coordinates.lon,
@@ -47,6 +49,7 @@ async def get_current_weather(coordinates: Coordinates) -> VariablesWithTime:
 
 async def get_temperature_pressure_windspeed(
         coordinates: Coordinates) -> Dict[str, float]:
+    """Получение температуры, давления и скорости ветра."""
     current: VariablesWithTime = await get_current_weather(coordinates)
     return {
         'temperature_2m': current.Variables(0).Value(),
@@ -56,6 +59,7 @@ async def get_temperature_pressure_windspeed(
 
 
 async def get_daily_weather(coordinates: Coordinates) -> Dict[str, list]:
+    """Получение ежедневной погоды для города."""
     params = {
         'latitude': coordinates.lat,
         'longitude': coordinates.lon,
@@ -82,6 +86,7 @@ async def get_daily_weather(coordinates: Coordinates) -> Dict[str, list]:
 
 async def get_today_weather_by_hour(
         coordinates: Coordinates, hour: int) -> Dict[str, float]:
+    """Получение погодных данных по часам для города."""
     params = {
         'latitude': coordinates.lat,
         'longitude': coordinates.lon,

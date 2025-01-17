@@ -6,9 +6,11 @@ from core.config import settings
 
 
 class PreBase:
+    """Базовый класс для моделей."""
 
     @declared_attr
     def __tablename__(cls):
+        """Возвращает имя таблицы на основе имени класса."""
         return cls.__name__.lower()
 
     id = Column(Integer, primary_key=True)

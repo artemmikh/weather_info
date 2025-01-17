@@ -1,9 +1,9 @@
 from typing import Optional
-
 from pydantic import BaseModel
 
 
 class Coordinates(BaseModel):
+    """Схема географических координат города"""
     lat: float
     lon: float
 
@@ -17,6 +17,7 @@ class Coordinates(BaseModel):
 
 
 class CityCreate(BaseModel):
+    """Схема данных для создания нового города"""
     name: str
     lat: float
     lon: float
@@ -32,6 +33,7 @@ class CityCreate(BaseModel):
 
 
 class CityDB(BaseModel):
+    """Схема модели города в базе данных"""
     id: int
     name: str
 
@@ -40,6 +42,7 @@ class CityDB(BaseModel):
 
 
 class CityUpdate(BaseModel):
+    """Схема данных для обновления информации о погоде в городе"""
     temperature_max: Optional[float]
     temperature_min: Optional[float]
     precipitation_sum: Optional[float]
@@ -48,6 +51,7 @@ class CityUpdate(BaseModel):
 
 
 class UserCreate(BaseModel):
+    """Схема данных для создания нового пользователя"""
     name: str
 
     class Config:
@@ -59,6 +63,7 @@ class UserCreate(BaseModel):
 
 
 class UserDB(BaseModel):
+    """Схема модели пользователя в базе данных"""
     id: int
 
     class Config:
@@ -66,6 +71,7 @@ class UserDB(BaseModel):
 
 
 class WeatherResponse(BaseModel):
+    """Схема ответа с данными о погоде для города"""
     temperature: Optional[float] = None
     humidity: Optional[float] = None
     wind_speed: Optional[float] = None

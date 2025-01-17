@@ -27,6 +27,7 @@ app = FastAPI(
 
 
 async def update_weather_periodically(session: AsyncSession) -> None:
+    """Периодически обновляет погоду для всех отслеживаемых городов."""
     while True:
         settings.logger.info('Запущен процесс периодического обновления '
                              'погоды для отслеживаемых городов.')
@@ -36,6 +37,7 @@ async def update_weather_periodically(session: AsyncSession) -> None:
 
 @app.on_event('startup')
 async def startup() -> None:
+    """Запускает процесс обновления погоды при старте приложения."""
     async for session in get_async_session():
         loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
         loop.create_task(update_weather_periodically(session))
@@ -50,6 +52,7 @@ def read_root() -> dict[str, str]:
 async def get_current_weather_by_coordinates(
         coordinates: Coordinates
 ) -> dict[str, float]:
+    """Получает текущую погоду по координатам."""
     return await get_temperature_pressure_windspeed(coordinates)
 
 
@@ -75,6 +78,7 @@ async def get_today_weather_by_time(
         ),
         session: AsyncSession = Depends(get_async_session)
 ) -> dict[str, float]:
+    """Получает погоду по заданному городу и часу."""
     await check_city_exists(city, session)
     await check_time(hour)
     city_obj = await city_crud.get_city_obj_by_name(city, session)
@@ -88,6 +92,7 @@ async def register_user(
         data: UserCreate,
         session: AsyncSession = Depends(get_async_session)
 ) -> UserDB:
+    """Регистрирует нового пользователя."""
     await check_user_name_duplicate(data.name, session)
     return await user_crud.create(data, session)
 
@@ -97,6 +102,7 @@ async def add_city(
         city: CityCreate,
         session: AsyncSession = Depends(get_async_session)
 ) -> JSONResponse:
+    """Добавляет город в отслеживаемые города и обновляет для него прогноз."""
     await check_city_name_duplicate(city.name, session)
     city_obj = await city_crud.create(city, session)
     await get_weather_for_city(city_obj)
@@ -110,10 +116,12 @@ async def add_city(
 async def get_list_city(
         session: AsyncSession = Depends(get_async_session)
 ) -> list[CityDB]:
+    """Возвращает список отслеживаемых городов."""
     return await city_crud.get_multi(session)
 
 
 async def create_tables() -> None:
+    """Создает таблицы в базе данных."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
