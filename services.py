@@ -1,10 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from typing import List
 
-from crud import city_crud
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from models import City
-from schemas import Coordinates, CityUpdate
+from schemas import Coordinates
 from weather_api import get_daily_weather
 
 

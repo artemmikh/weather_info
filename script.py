@@ -1,23 +1,20 @@
 import asyncio
-from asyncio import wait_for
 from http import HTTPStatus
 from typing import List, Literal
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 import uvicorn
-from fastapi import FastAPI, Depends, logger
+from fastapi import FastAPI, Depends
 from fastapi.params import Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
-from core.db import Base, engine, get_async_session, AsyncSessionLocal
+from core.db import Base, engine, get_async_session
+from crud import user_crud, city_crud
 from models import User, City  # noqa
 from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB, \
     WeatherResponse
 from services import update_weather_for_all_cities, get_weather_for_city
-from crud import user_crud, city_crud
 from validators import check_user_name_duplicate, check_city_name_duplicate, \
     check_city_exists, check_time
 from weather_api import get_temperature_pressure_windspeed, \
