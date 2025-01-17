@@ -18,7 +18,7 @@ from services import update_weather_for_all_cities, get_weather_for_city
 from validators import check_user_name_duplicate, check_city_name_duplicate, \
     check_city_exists, check_time
 from weather_api import get_temperature_pressure_windspeed, \
-    get_today_weather_by_time
+    get_today_weather_by_hour
 
 app = FastAPI(
     title=settings.app_title,
@@ -79,7 +79,7 @@ async def get_today_weather_by_time(
     await check_time(hour)
     city_obj = await city_crud.get_city_obj_by_name(city, session)
     coordinates = Coordinates(lat=city_obj.lat, lon=city_obj.lon)
-    weather = await get_today_weather_by_time(coordinates, hour)
+    weather = await get_today_weather_by_hour(coordinates, hour)
     return {param: weather[param] for param in params if param in weather}
 
 

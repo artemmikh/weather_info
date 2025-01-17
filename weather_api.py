@@ -79,7 +79,7 @@ async def get_daily_weather(coordinates: Coordinates) -> Dict[str, list]:
     }
 
 
-async def get_today_weather_by_time(
+async def get_today_weather_by_hour(
         coordinates: Coordinates, hour: int) -> Dict[str, float]:
     params = {
         'latitude': coordinates.lat,
