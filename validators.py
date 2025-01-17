@@ -44,6 +44,6 @@ async def check_time(time: int):
     if not (0 <= time <= 23):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Время должно быть в диапазоне от 0 до 23."
+            detail='Время должно быть в диапазоне от 0 до 23.'
         )
     return True

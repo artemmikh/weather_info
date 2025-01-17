@@ -37,7 +37,7 @@ async def update_weather_periodically(session):
         await asyncio.sleep(settings.update_interval_seconds)
 
 
-@app.on_event("startup")
+@app.on_event('startup')
 async def startup():
     async for session in get_async_session():
         loop = asyncio.get_event_loop()
@@ -49,13 +49,13 @@ def read_root():
     return {'weather_info': 'hello!'}
 
 
-@app.post("/weather")
+@app.post('/weather')
 async def get_current_weather_by_coordinates(coordinates: Coordinates):
     return await get_temperature_pressure_windspeed(coordinates)
 
 
 @app.get(
-    "/weather",
+    '/weather',
     response_model=WeatherResponse,
     response_model_exclude_none=True,
 )
@@ -64,15 +64,15 @@ async def get_today_weather_by_time(
         hour: int = Query(
             ...,
             ge=0, le=23,
-            description="Время в формате от 0 до 23, "
-                        "где 0 — это полночь, а 23 — 23:00"
+            description='Время в формате от 0 до 23, '
+                        'где 0 — это полночь, а 23 — 23:00'
         ),
         params: List[Literal[
-            "temperature", "humidity", "wind_speed", "precipitation"]] = Query(
+            'temperature', 'humidity', 'wind_speed', 'precipitation']] = Query(
             ...,
-            description="Параметры погоды, которые необходимо вернуть. "
-                        "Возможные значения: "
-                        "temperature, humidity, wind_speed, precipitation."
+            description='Параметры погоды, которые необходимо вернуть. '
+                        'Возможные значения: '
+                        'temperature, humidity, wind_speed, precipitation.'
         ),
         session: AsyncSession = Depends(get_async_session)
 ):
