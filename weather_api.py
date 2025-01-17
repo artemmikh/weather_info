@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Any, Dict
 
 import openmeteo_requests
 import requests_cache
@@ -14,9 +15,9 @@ retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
 openmeteo = openmeteo_requests.Client(session=retry_session)
 
 
-async def get_openmeteo_response(params: dict):
+async def get_openmeteo_response(params: Dict[str, Any]) -> Any:
     try:
-        responses = openmeteo.weather_api(url, params=params)
+        responses: Any = openmeteo.weather_api(url, params=params)
         return responses
     except Exception:
         raise HTTPException(
@@ -26,7 +27,7 @@ async def get_openmeteo_response(params: dict):
 
 
 async def get_current_weather(coordinates: Coordinates) -> VariablesWithTime:
-    params: dict = {
+    params = {
         'latitude': coordinates.lat,
         'longitude': coordinates.lon,
         'current': [
@@ -43,7 +44,8 @@ async def get_current_weather(coordinates: Coordinates) -> VariablesWithTime:
     return responses[0].Current()
 
 
-async def get_temperature_pressure_windspeed(coordinates: Coordinates) -> dict:
+async def get_temperature_pressure_windspeed(
+        coordinates: Coordinates) -> Dict[str, float]:
     current: VariablesWithTime = await get_current_weather(coordinates)
     return {
         'temperature_2m': current.Variables(0).Value(),
@@ -52,7 +54,7 @@ async def get_temperature_pressure_windspeed(coordinates: Coordinates) -> dict:
     }
 
 
-async def get_daily_weather(coordinates: Coordinates) -> dict:
+async def get_daily_weather(coordinates: Coordinates) -> Dict[str, list]:
     params = {
         'latitude': coordinates.lat,
         'longitude': coordinates.lon,
@@ -77,8 +79,8 @@ async def get_daily_weather(coordinates: Coordinates) -> dict:
     }
 
 
-async def get_today_weather_by_time(coordinates: Coordinates,
-                                    hour: int) -> dict:
+async def get_today_weather_by_time(
+        coordinates: Coordinates, hour: int) -> Dict[str, float]:
     params = {
         'latitude': coordinates.lat,
         'longitude': coordinates.lon,
