@@ -27,13 +27,12 @@ app = FastAPI(
     title=settings.app_title,
     description=settings.description
 )
-SECONDS_REPEAT_UPDATE_PERIOD = 900
 
 
 async def update_weather_periodically(session):
     while True:
         await update_weather_for_all_cities(session)
-        await asyncio.sleep(SECONDS_REPEAT_UPDATE_PERIOD)
+        await asyncio.sleep(settings.update_interval_seconds)
 
 
 @app.on_event("startup")
