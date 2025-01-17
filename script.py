@@ -6,7 +6,7 @@ from typing import List, Literal
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, logger
 from fastapi.params import Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,6 +31,8 @@ app = FastAPI(
 
 async def update_weather_periodically(session):
     while True:
+        settings.logger.info('Запущен процесс периодического обновления '
+                             'погоды для отслеживаемых городов.')
         await update_weather_for_all_cities(session)
         await asyncio.sleep(settings.update_interval_seconds)
 
