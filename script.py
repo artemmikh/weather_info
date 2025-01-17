@@ -1,3 +1,4 @@
+import asyncio
 from asyncio import wait_for
 from http import HTTPStatus
 from typing import List, Literal
@@ -11,7 +12,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
-from core.db import Base, engine, get_async_session
+from core.db import Base, engine, get_async_session, AsyncSessionLocal
 from models import User, City  # noqa
 from schemas import Coordinates, UserCreate, UserDB, CityCreate, CityDB, \
     WeatherResponse
@@ -27,24 +28,18 @@ app = FastAPI(
     description=settings.description
 )
 
-scheduler = AsyncIOScheduler()
 
-
-def start_weather_update_task(session: AsyncSession):
-    scheduler.add_job(
-        update_weather_for_all_cities,
-        'interval',
-        minutes=15,
-        args=[session]
-    )
-    scheduler.start()
+async def update_weather_periodically(session):
+    while True:
+        await update_weather_for_all_cities(session)
+        await asyncio.sleep(5)
 
 
 @app.on_event("startup")
-async def startup_event():
-    async_session = get_async_session()
-    session = await async_session.__anext__()
-    start_weather_update_task(session)
+async def startup():
+    async for session in get_async_session():
+        loop = asyncio.get_event_loop()
+        loop.create_task(update_weather_periodically(session))
 
 
 @app.get('/')
@@ -119,7 +114,5 @@ async def create_tables():
 
 
 if __name__ == '__main__':
-    import asyncio
-
     asyncio.run(create_tables())
     uvicorn.run('script:app', reload=True)

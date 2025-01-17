@@ -39,6 +39,14 @@ class CityDB(BaseModel):
         orm_mode = True
 
 
+class CityUpdate(BaseModel):
+    temperature_max: Optional[float]
+    temperature_min: Optional[float]
+    precipitation_sum: Optional[float]
+    precipitation_hours: Optional[float]
+    wind_speed_max: Optional[float]
+
+
 class UserCreate(BaseModel):
     name: str
 
