@@ -93,7 +93,7 @@ async def add_city(
     """Добавляет город в отслеживаемые города и обновляет для него прогноз."""
     await check_city_name_duplicate(city.name, session)
     city_obj = await city_crud.create(city, session)
-    await get_weather_for_city(city_obj)
+    await get_weather_for_city(city_obj, session)
     return JSONResponse(
         status_code=HTTPStatus.CREATED,
         content={'message': 'Город добавлен в отслеживаемые'}

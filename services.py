@@ -27,6 +27,7 @@ async def update_weather_for_all_cities(session: AsyncSession) -> None:
     await session.commit()
 
 
-async def get_weather_for_city(city: City) -> None:
+async def get_weather_for_city(city: City, session: AsyncSession) -> None:
     """Обновляет погоду для одного города."""
     await update_weather([city])
+    await session.commit()
