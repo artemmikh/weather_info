@@ -71,6 +71,8 @@ async def get_today_weather_by_time(
             'temperature', 'humidity', 'wind_speed', 'precipitation']] = Query(
             ...,
             description='Параметры погоды, которые необходимо вернуть. '
+                        'Выберете одно или несколько значений, удерживая '
+                        'Ctrl на Windows или Cmd на MacOS. '
                         'Возможные значения: '
                         'temperature, humidity, wind_speed, precipitation.'
         ),
