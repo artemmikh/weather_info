@@ -12,10 +12,24 @@
 
    ```bash
    git clone https://github.com/artemmikh/weather_info.git
-   cd weather-info-api
+   cd weather_info
    ```
 
-2. Установите зависимости:
+2. Создайте и активируйте виртуальное окружение:
+
+   на Windows:
+
+    ```bach
+    python -m venv venv
+    source venv/Scripts/activate
+    ```
+   На macOS и Linux:
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3. Установите зависимости:
 
    ```bash
    pip install -r requirements.txt
@@ -35,7 +49,7 @@ python3 script.py
 
 ### 1. Получение текущей погоды по координатам
 
-**Метод:** `GET /weather/current`
+**Метод:** `POST /weather`
 
 **Параметры:**
 
@@ -110,14 +124,14 @@ GET /cities
 
 ### 4. Получение погоды на указанный час для города
 
-**Метод:** `GET /weather/hourly`
+**Метод:** `GET /weather/`
 
 **Параметры:**
 
 - `city_name` (str): название города
 - `hour` (int): час для получения прогноза (0-23)
-- `parameters` (list): список параметров погоды, например: `temperature`,
-  `humidity`, `wind_speed`, `precipitation`
+- `parameters` (list): список параметров погоды, например:
+  `temperature`, `humidity`, `wind_speed`, `precipitation`
 
 **Ответ:**
 
